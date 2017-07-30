@@ -106,11 +106,14 @@ public class TestBeelineArgParsing {
   @Test
   public void testSimpleArgs() throws Exception {
     TestBeeline bl = new TestBeeline();
-    String args[] = new String[] {"-u", "url", "-n", "name",
-      "-p", "password", "-d", "driver", "-a", "authType"};
+//    String args[] = new String[] {"-u", "url", "-n", "name",
+//      "-p", "password", "-d", "driver", "-a", "authType"};
+    String args[] = new String[] {"-u", "jdbc:hive2://localhost:10000/default", "-n", "hadoop", "-d", "drive",
+    "--hiveconf", "instance.name=default", "--hiveconf", "instance.owner.name=hadoop"};
     org.junit.Assert.assertEquals(0, bl.initArgs(args));
-    Assert.assertTrue(bl.connectArgs.equals("url name password driver"));
-    Assert.assertTrue(bl.getOpts().getAuthType().equals("authType"));
+    Assert.assertTrue(bl.getOpts().getHiveConfVariables().get("instance.name").equals("default"));
+//    Assert.assertTrue(bl.connectArgs.equals("url name password driver"));
+//    Assert.assertTrue(bl.getOpts().getAuthType().equals("authType"));
   }
 
   @Test

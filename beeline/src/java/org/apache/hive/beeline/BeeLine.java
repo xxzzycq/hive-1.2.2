@@ -480,7 +480,7 @@ public class BeeLine implements Closeable {
    */
   public static void mainWithInputRedirection(String[] args, InputStream inputStream)
       throws IOException {
-    BeeLine beeLine = new BeeLine();
+    BeeLine beeLine = new BeeLine(); // 执行之前先加载static代码块初始化option
     int status = beeLine.begin(args, inputStream);
 
     if (!Boolean.getBoolean(BeeLineOpts.PROPERTY_NAME_EXIT)) {
@@ -644,6 +644,7 @@ public class BeeLine implements Closeable {
 
     try {
       beelineParser = new BeelineParser();
+      // 根据指定的option解析jdbc连接串
       cl = beelineParser.parse(options, args);
     } catch (ParseException e1) {
       output(e1.getMessage());
@@ -665,6 +666,7 @@ public class BeeLine implements Closeable {
       getOpts().getHiveVariables().put(key, hiveVars.getProperty(key));
     }
 
+    // 将hiveconf的key=value放入到BeelineOpts的hiveConfVariables中
     Properties hiveConfs = cl.getOptionProperties("hiveconf");
     for (String key : hiveConfs.stringPropertyNames()) {
       getOpts().getHiveConfVariables().put(key, hiveConfs.getProperty(key));
@@ -754,6 +756,9 @@ public class BeeLine implements Closeable {
     }
 
     try {
+      // 初始化参数
+      // ./bin/beeline
+      // !connect jdbc:hive2://localhost:10000/default --hiveconf instance.name=default --hiveconf intance.ownername=yangchangqi -n yangchangqi
       int code = initArgs(args);
       if (code != 0) {
         return code;
@@ -942,7 +947,7 @@ public class BeeLine implements Closeable {
       line = "!help";
     }
 
-    if (line.startsWith(COMMAND_PREFIX)) {
+    if (line.startsWith(COMMAND_PREFIX)) { // !
       Map<String, CommandHandler> cmdMap = new TreeMap<String, CommandHandler>();
       line = line.substring(1);
       for (int i = 0; i < commandHandlers.length; i++) {
